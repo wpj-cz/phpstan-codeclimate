@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace KupShop\DevelopmentBundle\Util\PHPStan;
+namespace NoCoolNameTom\PHPStan\ErrorFormatter;
 
 use Nette\Utils\Json;
 use PHPStan\Command\ErrorFormatter\ErrorFormatter;

@@ -15,6 +15,8 @@ class CodeclimateErrorFormatter implements ErrorFormatter
     {
         $errorsArray = [];
 
+        $root = rtrim(dirname($analysisResult->getProjectConfigFile()), '/');
+
         foreach ($analysisResult->getFileSpecificErrors() as $fileSpecificError) {
             $error = [
                 'type' => 'issue',
@@ -22,7 +24,11 @@ class CodeclimateErrorFormatter implements ErrorFormatter
                 'description' => $fileSpecificError->getMessage(),
                 'categories' => ['Style'],
                 'location' => [
-                    'path' => $fileSpecificError->getFile(),
+                    'path' => str_replace(
+                        $root . '/',
+                        '',
+                        $fileSpecificError->getFile()
+                    ),
                     'lines' => [
                         'begin' => $fileSpecificError->getLine(),
                     ],
@@ -53,7 +59,7 @@ class CodeclimateErrorFormatter implements ErrorFormatter
                 'description' => $notFileSpecificError,
                 'categories' => ['Style'],
                 'location' => [
-                    'path' => $analysisResult->getCurrentDirectory() . "/.",
+                    'path' => $root . "/.",
                     'positions' => [
                         'offset' => 0,
                     ],
@@ -67,7 +73,7 @@ class CodeclimateErrorFormatter implements ErrorFormatter
 
         $json = Json::encode($errorsArray, Json::PRETTY);
 
-        $style->write($json);
+        $style->writeRaw($json);
 
         return $analysisResult->hasErrors() ? 1 : 0;
     }
